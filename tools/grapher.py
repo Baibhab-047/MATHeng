@@ -47,14 +47,14 @@ class Plotter:
 
         math_x_values = (x_positions - self.ORIGIN_X) / self.SCALE
         for px, math_x in zip(x_positions, math_x_values):
-            pg.draw.line(grid, (225, 225, 225), (px, 0), (px, self.HEIGHT), 1)
+            pg.draw.line(grid, (235, 235, 235), (px, 0), (px, self.HEIGHT), 1)
             if abs(math_x) > 0.01:
                 text = self.font.render(f"{math_x:g}", True, (60, 60, 60))
                 grid.blit(text, (px, self.HEIGHT - 25))
 
         math_y_values = (self.ORIGIN_Y - y_positions) / self.SCALE
         for py, math_y in zip(y_positions, math_y_values):
-            pg.draw.line(grid, (225, 225, 225), (0, py), (self.WIDTH, py), 1)
+            pg.draw.line(grid, (235, 235, 235), (0, py), (self.WIDTH, py), 1)
             if abs(math_y) > 0.01:
                 text = self.font.render(f"{math_y:g}", True, (60, 60, 60))
                 grid.blit(text, (5, py))
