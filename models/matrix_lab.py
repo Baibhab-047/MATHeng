@@ -4,9 +4,28 @@ import sympy as sp
 from pathlib import Path
 
 
+class MatrixInput:
+    def __init__(self, entries=None):
+        self.entries = entries or []
+
+    def get_text(self):
+        if not self.entries:
+            return ""
+        lines = []
+        for row in self.entries:
+            tokens = []
+            for entry in row:
+                text = entry.get_text().strip()
+                if not text:
+                    text = "0"
+                    entry.set_text("0")
+                tokens.append(text)
+            lines.append(" ".join(tokens))
+        return " ; ".join(lines)
+
+
 class Matrix_Lab:
-    """Matrix Lab: enter matrices and run linear-algebra operations.
-    """
+
 
     BG = (24, 24, 37)
     TEXT = (205, 214, 244)
@@ -28,22 +47,45 @@ class Matrix_Lab:
         self.title_font = pygame.font.Font(self.font_directory, 22)
 
         cx = self.WIDTH // 2
-        field_w = min(420, self.WIDTH // 3)
+        field_w = min(420, self.WIDTH // 18)
+        f_w = min(420, self.WIDTH//6)
         top = self.HEIGHT // 8
 
-        self.label_a = self._caption("Matrix A", cx - field_w - 20, top - 30)
-        self.input_a = pygame_gui.elements.UITextEntryLine(
-            relative_rect=pygame.Rect((cx - field_w - 20, top), (field_w, 40)),
+        self.label_a = self._caption("Matrix A", cx - f_w - 20, top - 30)
+        self.matrix_a_row = pygame_gui.elements.UITextEntryLine(
+            relative_rect=pygame.Rect((cx - field_w - 80, top), (field_w, 40)),
             manager=self.manager,
-            placeholder_text="1 2; 3 4",
+            placeholder_text="C",
+        )
+        self.matrix_a_col = pygame_gui.elements.UITextEntryLine(
+            relative_rect=pygame.Rect((cx - field_w - 80 - field_w - 20, top), (field_w, 40)),
+            manager=self.manager,
+            placeholder_text="R",
         )
 
         self.label_b = self._caption("Matrix B", cx + 20, top - 30)
-        self.input_b = pygame_gui.elements.UITextEntryLine(
+
+        self.matrix_b_row = pygame_gui.elements.UITextEntryLine(
             relative_rect=pygame.Rect((cx + 20, top), (field_w, 40)),
             manager=self.manager,
-            placeholder_text="5 6; 7 8 (for A x B)",
+            placeholder_text="R",
         )
+        self.matrix_b_col = pygame_gui.elements.UITextEntryLine(
+            relative_rect=pygame.Rect((cx + 20 + field_w + 20, top), (field_w, 40)),
+            manager=self.manager,
+            placeholder_text="C",
+        )
+
+        self.input_a = MatrixInput()
+        self.input_b = MatrixInput()
+        self.matrix_a_entries = []
+        self.matrix_b_entries = []
+        self.current_a_size = (0, 0)
+        self.current_b_size = (0, 0)
+        
+        self.matrix_start_y = top + 60
+        self.center_a = cx - field_w - 90
+        self.center_b = cx + field_w + 30
 
         ops = [
             ("Determinant A", self.op_det),
@@ -53,6 +95,7 @@ class Matrix_Lab:
             ("Eigenvalues A", self.op_eigen),
             ("A x B", self.op_multiply),
             ("A + B", self.op_add),
+            ("Swap A & B", self.op_interchange),
         ]
         self.op_buttons = {}
         btn_w = 190
@@ -61,7 +104,8 @@ class Matrix_Lab:
         cols = 4
         grid_w = cols * btn_w + (cols - 1) * gap
         start_x = cx - grid_w // 2
-        start_y = top + 80
+        start_y = top + self.HEIGHT // 2
+        
         for i, (label, handler) in enumerate(ops):
             row, col = divmod(i, cols)
             bx = start_x + col * (btn_w + gap)
@@ -83,6 +127,106 @@ class Matrix_Lab:
             text=text,
             manager=self.manager,
         )
+        
+    def _update_layout(self):
+        a_bottom = self.matrix_start_y
+        if self.current_a_size[0] > 0:
+            a_bottom = self.matrix_start_y + self.current_a_size[0] * 35
+            
+        b_bottom = self.matrix_start_y
+        if self.current_b_size[0] > 0:
+            b_bottom = self.matrix_start_y + self.current_b_size[0] * 35
+            
+        max_bottom = max(a_bottom, b_bottom, self.matrix_start_y) + 20
+        max_bottom = max(max_bottom, self.HEIGHT // 8 + self.HEIGHT // 2)
+        
+        btn_w = 190
+        btn_h = 44
+        gap = 14
+        cols = 4
+        grid_w = cols * btn_w + (cols - 1) * gap
+        start_x = self.WIDTH // 2 - grid_w // 2
+        start_y = max_bottom
+        
+        i = 0
+        for btn in self.op_buttons:
+            row, col = divmod(i, cols)
+            bx = start_x + col * (btn_w + gap)
+            by = start_y + row * (btn_h + gap)
+            btn.set_relative_position((bx, by))
+            i += 1
+            
+        self.result_top = start_y + 2 * (btn_h + gap) + 30
+
+    def _rebuild_matrices(self):
+        try:
+            a_r = int(self.matrix_a_col.get_text())
+        except ValueError:
+            a_r = 0
+        try:
+            a_c = int(self.matrix_a_row.get_text())
+        except ValueError:
+            a_c = 0
+            
+        try:
+            b_r = int(self.matrix_b_row.get_text())
+        except ValueError:
+            b_r = 0
+        try:
+            b_c = int(self.matrix_b_col.get_text())
+        except ValueError:
+            b_c = 0
+
+        a_r = max(0, min(a_r, 5))
+        a_c = max(0, min(a_c, 5))
+        b_r = max(0, min(b_r, 5))
+        b_c = max(0, min(b_c, 5))
+
+        if (a_r, a_c) != self.current_a_size:
+            for row in self.matrix_a_entries:
+                for entry in row:
+                    entry.kill()
+            self.matrix_a_entries = []
+            if a_r > 0 and a_c > 0:
+                start_x = int(self.center_a - (a_c * 50 - 5) / 2)
+                for i in range(a_r):
+                    row_entries = []
+                    for j in range(a_c):
+                        rect = pygame.Rect((start_x + j * 50, self.matrix_start_y + i * 35), (45, 30))
+                        entry = pygame_gui.elements.UITextEntryLine(
+                            relative_rect=rect,
+                            manager=self.manager,
+                            placeholder_text="0"
+                        )
+                        entry.set_text("0")
+                        row_entries.append(entry)
+                    self.matrix_a_entries.append(row_entries)
+            self.current_a_size = (a_r, a_c)
+            self.input_a.entries = self.matrix_a_entries
+            self._update_layout()
+
+        if (b_r, b_c) != self.current_b_size:
+            for row in self.matrix_b_entries:
+                for entry in row:
+                    entry.kill()
+            self.matrix_b_entries = []
+            if b_r > 0 and b_c > 0:
+                start_x = int(self.center_b - (b_c * 50 - 5) / 2)
+                for i in range(b_r):
+                    row_entries = []
+                    for j in range(b_c):
+                        rect = pygame.Rect((start_x + j * 50, self.matrix_start_y + i * 35), (45, 30))
+                        entry = pygame_gui.elements.UITextEntryLine(
+                            relative_rect=rect,
+                            manager=self.manager,
+                            placeholder_text="0"
+                        )
+                        entry.set_text("0")
+                        row_entries.append(entry)
+                    self.matrix_b_entries.append(row_entries)
+            self.current_b_size = (b_r, b_c)
+            self.input_b.entries = self.matrix_b_entries
+            self._update_layout()
 
     def parse_matrix(self, raw):
         raw = raw.strip()
@@ -151,6 +295,38 @@ class Matrix_Lab:
             self._set_result("A + B =", a + b)
         self._safe(run)
 
+    def op_interchange(self):
+
+        a_vals = [[e.get_text() for e in row] for row in self.matrix_a_entries]
+        b_vals = [[e.get_text() for e in row] for row in self.matrix_b_entries]
+
+        ar_text = self.matrix_a_col.get_text()
+        ac_text = self.matrix_a_row.get_text()
+        br_text = self.matrix_b_row.get_text()
+        bc_text = self.matrix_b_col.get_text()
+        
+
+        self.matrix_a_col.set_text(br_text)
+        self.matrix_a_row.set_text(bc_text)
+        self.matrix_b_row.set_text(ar_text)
+        self.matrix_b_col.set_text(ac_text)
+
+        self.current_a_size = (0, 0)
+        self.current_b_size = (0, 0)
+        self._rebuild_matrices()
+        
+
+        for i, row in enumerate(self.matrix_a_entries):
+            for j, entry in enumerate(row):
+                if i < len(b_vals) and j < len(b_vals[i]):
+                    entry.set_text(b_vals[i][j])
+                    
+
+        for i, row in enumerate(self.matrix_b_entries):
+            for j, entry in enumerate(row):
+                if i < len(a_vals) and j < len(a_vals[i]):
+                    entry.set_text(a_vals[i][j])
+
     def process_event(self, event):
         self.manager.process_events(event)
         if event.type == pygame_gui.UI_BUTTON_PRESSED:
@@ -159,7 +335,16 @@ class Matrix_Lab:
                 handler()
 
     def update(self, time_delta):
+        self._rebuild_matrices()
         self.manager.update(time_delta)
+    
+    @property
+    def matrix_a_size(self):
+        return (int(self.matrix_a_row.get_text()), int(self.matrix_a_col.get_text()))
+    
+    @property
+    def matrix_b_size(self):
+        return (int(self.matrix_b_row.get_text()), int(self.matrix_b_col.get_text()))
 
     def draw(self, surface):
         surface.fill(self.BG)
