@@ -1,0 +1,102 @@
+{
+    "defaults": {
+        "font": {
+            "name": "JetBrains Mono",
+            "size": "16",
+            "regular_path": "assets/font/font.ttf",
+            "bold_path": "assets/font/font.ttf"
+        }
+    },
+
+    "#title": {
+        "font": {
+            "name": "JetBrains Mono",
+            "size": "28",
+            "bold": "1"
+        },
+        "colours": {
+            "normal_text": "#FFFFFF"
+        }
+    },
+
+    "#subtitle": {
+        "font": {
+            "name": "JetBrains Mono",
+            "size": "13"
+        },
+        "colours": {
+            "normal_text": "#6C7086"
+        }
+    },
+
+    "#footer": {
+        "font": {
+            "name": "JetBrains Mono",
+            "size": "12"
+        },
+        "colours": {
+            "normal_text": "#6C7086"
+        }
+    },
+
+    "#nav_item": {
+        "colours": {
+            "normal_bg": "#1E1E2E",
+            "hovered_bg": "#2E86AB",
+            "active_bg": "#145C8E",
+            "normal_text": "#CDD6F4",
+            "hovered_text": "#FFFFFF",
+            "normal_border": "#313244",
+            "hovered_border": "#2E86AB"
+        },
+        "misc": {
+            "shape": "rounded_rectangle",
+            "shape_corner_radius": "10",
+            "border_width": "1",
+            "shadow_width": "0",
+            "text_horiz_alignment": "left"
+        }
+    },
+
+    "#nav_group": {
+        "font": {
+            "name": "JetBrains Mono",
+            "size": "16",
+            "bold": "1"
+        },
+        "colours": {
+            "normal_bg": "#181825",
+            "hovered_bg": "#313244",
+            "active_bg": "#313244",
+            "normal_text": "#A6ADC8",
+            "hovered_text": "#FFFFFF",
+            "normal_border": "#313244"
+        },
+        "misc": {
+            "shape": "rounded_rectangle",
+            "shape_corner_radius": "10",
+            "border_width": "1",
+            "shadow_width": "0",
+            "text_horiz_alignment": "left"
+        }
+    },
+
+    "#nav_subitem": {
+        "colours": {
+            "normal_bg": "#181825",
+            "hovered_bg": "#2E86AB",
+            "active_bg": "#145C8E",
+            "normal_text": "#BAC2DE",
+            "hovered_text": "#FFFFFF",
+            "normal_border": "#181825",
+            "hovered_border": "#2E86AB"
+        },
+        "misc": {
+            "shape": "rounded_rectangle",
+            "shape_corner_radius": "8",
+            "border_width": "1",
+            "shadow_width": "0",
+            "text_horiz_alignment": "left"
+        }
+    }
+}

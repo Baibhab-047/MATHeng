@@ -1,0 +1,50 @@
+{
+    "defaults": {
+        "font": {
+            "name": "JetBrains Mono",
+            "size": "16",
+            "regular_path": "assets/font/font.ttf",
+            "bold_path": "assets/font/font.ttf"
+        }
+    },
+
+    "button": {
+        "font": {
+            "name": "JetBrains Mono",
+            "size": "16"
+        },
+        "colours": {
+            "normal_bg": "#2E86AB",
+            "hovered_bg": "#1B6CA8",
+            "active_bg": "#145C8E",
+            "normal_text": "#FFFFFF"
+        },
+        "misc": {
+            "shape": "rounded_rectangle",
+            "shape_corner_radius": "12",
+            "border_width": "2",
+            "shadow_width": "4"
+        }
+    },
+
+    "text_entry_line": {
+        "font": {
+            "name": "JetBrains Mono",
+            "size": "16"
+        },
+        "colours": {
+            "normal_bg": "#1E1E2E",
+            "focused_bg": "#2A2A3E",
+            "normal_border": "#555577",
+            "focused_border": "#7878AA",
+            "normal_text": "#CCCCDD",
+            "focused_text": "#FFFFFF"
+        },
+        "misc": {
+            "shape": "rounded_rectangle",
+            "shape_corner_radius": "10",
+            "border_width": "2",
+            "shadow_width": "2"
+        }
+    }
+}

@@ -1,0 +1,43 @@
+{
+    "defaults": {
+        "font": {
+            "name": "JetBrains Mono",
+            "size": "40",
+            "bold": "1",
+            "italic": "0"
+        },
+        "colours": {
+            "normal_bg": "#1e1e24",
+            "hovered_bg": "#313642",
+            "active_bg": "#1a1c23",
+            "normal_text": "#e3e3e3",
+            "hovered_text": "#ffffff",
+            "active_text": "#ffffff",
+            "border": "#434956"
+        }
+    },
+
+    "#main_heading": {
+        "font": {
+            "name": "JetBrains Mono",
+            "size": "44",
+            "bold": "1"
+        },
+        "colours": {
+            "normal_text": "#00adb5",
+            "normal_bg": "#111318",
+            "border": "#00adb5",
+            "shadow": "#003b3e"
+        },
+        "misc": {
+            "shape": "rounded_rectangle",
+            "shape_corner_radius": "8",
+            "border_width": "2",
+            "shadow_width": "3",
+            "text_shadow_size": "2",
+            "text_shadow_offset": "2,2",
+            "text_shadow_colour": "#051c24",
+            "padding": "12,8"
+        }
+    }
+}

@@ -1,0 +1,48 @@
+{ 
+    "defaults": {
+        "font": {
+            "name": "Open Sans",
+            "size": "28",
+            "regular_path": "assets/font/os.ttf",
+            "bold_path": "assets/font/os.ttf"
+        }
+    },
+    "label": {
+        "font": {
+            "name": "Open Sans",
+            "size": "28",
+            "regular_path": "assets/font/os.ttf",
+            "bold_path": "assets/font/os.ttf"
+        },
+        "colours": {
+            "normal_text": "#000000",
+            "normal_bg": "#111318"
+        },
+        "misc": {
+            "shape": "rounded_rectangle",
+            "shape_corner_radius": "8",
+            "border_width": "2",
+            "padding": "12,8"
+        }
+    },
+    "button":{
+        "font": {
+            "name": "Open Sans",
+            "size": "28",
+            "regular_path": "assets/font/os.ttf",
+            "bold_path": "assets/font/os.ttf"
+        },
+        "colours": {
+            "normal_bg": "#2E86AB",
+            "hovered_bg": "#1B6CA8",
+            "active_bg": "#145C8E",
+            "normal_text": "#FFFFFF"
+        },
+        "misc": {
+            "shape": "rounded_rectangle",
+            "shape_corner_radius": "16",
+            "border_width": "2",
+            "shadow_width": "4"
+        }
+    }
+}
