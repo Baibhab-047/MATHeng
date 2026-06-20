@@ -35,7 +35,7 @@ class Extrema:
 
     def max_min(self):
         self.error_message = None
-        raw_string = self.extrema_input.get_text().strip()
+        raw_string = self.extrema_input.get_text().strip().replace("e", "E").replace("pi", "PI").replace("π", "PI")
         if not raw_string:
             self.error_message = "Error: Please enter an expression."
             return

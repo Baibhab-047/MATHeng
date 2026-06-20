@@ -10,6 +10,8 @@ from models.integral import Integral
 from models.eq_solver import Equation_Solver
 from models.extrema import Extrema
 from models.matrix_lab import Matrix_Lab
+from models.collatz import CollatzSeries
+from models.fibonacci import FibonacciSeries
 
 
 class App:
@@ -46,6 +48,7 @@ class App:
 
         self.routes = {}
         self.expressions_open = True
+        self.series_open = True  # Added toggle state for Series
         self._build_sidebar()
 
 
@@ -61,6 +64,8 @@ class App:
             "Eq_Solver": lambda: Equation_Solver(surface=self.panel_surface),
             "Extrema": lambda: Extrema(surface=self.panel_surface),
             "Matrix": lambda: Matrix_Lab(surface=self.panel_surface),
+            "Collatz": lambda: CollatzSeries(surface=self.panel_surface),
+            "Fibonacci": lambda: FibonacciSeries(surface=self.panel_surface),
         }
         self._pages = {}
         self.active_key = None
@@ -91,6 +96,7 @@ class App:
         self.routes[self.graph_btn] = "Graph"
         y += btn_h + gap
 
+        # --- Expressions Section ---
         self.expr_header = pygame_gui.elements.UIButton(
             relative_rect=pg.Rect((x, y), (w, btn_h)),
             text="  Expressions", manager=self.manager, object_id="#nav_group",
@@ -117,6 +123,31 @@ class App:
             y += eh + 8
 
         y += gap
+
+        # --- Series Section (Added) ---
+        self.series_header = pygame_gui.elements.UIButton(
+            relative_rect=pg.Rect((x, y), (w, btn_h)),
+            text="  Series", manager=self.manager, object_id="#nav_group",
+        )
+        y += btn_h + gap
+
+        self.series_items = []
+        series_sub = [
+            ("Fibonacci", "Fibonacci"),
+            ("Collatz", "Collatz"),
+        ]
+        for label, route in series_sub:
+            btn = pygame_gui.elements.UIButton(
+                relative_rect=pg.Rect((ex, y), (ew, eh)),
+                text="    " + label, manager=self.manager, object_id="#nav_subitem",
+            )
+            self.routes[btn] = route
+            self.series_items.append(btn)
+            y += eh + 8
+            
+        y += gap
+
+        # --- Matrix & AI Sections ---
         self.matrix_btn = pygame_gui.elements.UIButton(
             relative_rect=pg.Rect((x, y), (w, btn_h)),
             text="  Matrix Lab", manager=self.manager, object_id="#nav_item",
@@ -132,6 +163,10 @@ class App:
 
     def _set_expressions_visibility(self, visible):
         for btn in self.expr_items:
+            btn.show() if visible else btn.hide()
+            
+    def _set_series_visibility(self, visible):
+        for btn in self.series_items:
             btn.show() if visible else btn.hide()
 
     def select(self, key):
@@ -154,7 +189,6 @@ class App:
                 d["pos"] = (px - self.panel_rect.x, py - self.panel_rect.y)
             return pg.event.Event(event.type, d)
         if event.type == pg.MOUSEWHEEL:
-
             d = dict(event.__dict__)
             mx, my = pg.mouse.get_pos()
             d["pos"] = (mx - self.panel_rect.x, my - self.panel_rect.y)
@@ -170,6 +204,8 @@ class App:
 
     def run(self):
         self._set_expressions_visibility(self.expressions_open)
+        self._set_series_visibility(self.series_open)  # Initialize series visibility
+        
         while True:
             dt = self.clock.tick(75) / 1000.0
             for event in pg.event.get():
@@ -177,17 +213,21 @@ class App:
                     pg.quit()
                     sys.exit()
 
-
                 if event.type == pygame_gui.UI_BUTTON_PRESSED and event.ui_element in self.routes:
                     self.select(self.routes[event.ui_element])
                     continue
+                
                 if event.type == pygame_gui.UI_BUTTON_PRESSED and event.ui_element == self.expr_header:
                     self.expressions_open = not self.expressions_open
                     self._set_expressions_visibility(self.expressions_open)
                     continue
+                    
+                if event.type == pygame_gui.UI_BUTTON_PRESSED and event.ui_element == self.series_header:
+                    self.series_open = not self.series_open
+                    self._set_series_visibility(self.series_open)
+                    continue
 
                 self.manager.process_events(event)
-
 
                 if self.active_page is not None and self._point_in_panel(event):
                     self.active_page.process_event(self._translate_event(event))
@@ -196,20 +236,16 @@ class App:
             if self.active_page is not None:
                 self.active_page.update(dt)
 
-
             self.screen.fill(self.CONTENT_BG)
             pg.draw.rect(self.screen, self.SIDEBAR_BG, pg.Rect(0, 0, self.sidebar_w, self.HEIGHT))
             pg.draw.line(self.screen, self.ACCENT, (self.sidebar_w, 0), (self.sidebar_w, self.HEIGHT), 3)
-
 
             if self.active_page is not None:
                 self.active_page.draw(self.panel_surface)
                 self.screen.blit(self.panel_surface, self.panel_rect.topleft)
 
-
             self.manager.draw_ui(self.screen)
             pg.display.flip()
-
 
 if __name__ == "__main__":
     App().run()

@@ -65,7 +65,7 @@ class Graph_Representation:
         self.recalculate_matrix()
 
     def update_functions(self):
-        functions = [box.get_text().strip() for box in self.boxes if box.get_text().strip()]
+        functions = [box.get_text().strip().replace("e", "E").replace("pi", "PI").replace("π", "PI") for box in self.boxes if box.get_text().strip()]
         if not functions:
             return []
         self.fn = Func(functions)

@@ -34,7 +34,7 @@ class Equation_Solver:
 
     def eq_solve(self):
         self.error_message = None
-        equation = self.input_box.get_text().strip()
+        equation = self.input_box.get_text().strip().replace("e", "E").replace("pi", "PI").replace("π", "PI")
         if not equation:
             self.error_message = "Error: Please enter an equation."
             return

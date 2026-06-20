@@ -44,7 +44,7 @@ class Derivative:
 
     def calculate_derivative(self):
         self.error_message = None
-        expression_raw = self.input_box.get_text().strip()
+        expression_raw = self.input_box.get_text().strip().replace("e", "E").replace("pi", "PI").replace("π", "PI")
         order_raw = self.order_box.get_text().strip()
         if not expression_raw:
             self.error_message = "Error: Please enter an expression."
